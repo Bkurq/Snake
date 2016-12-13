@@ -16,9 +16,10 @@ public class Main extends Application {
         theScene.setOnKeyPressed(event -> {
             root.input(event.getCode());
         });
-        theStage.setScene(theScene);
 
+        theStage.setScene(theScene);
         theStage.show();
+        root.startGame();
     }
 
     public static void main(String[] args) {

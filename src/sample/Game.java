@@ -16,19 +16,19 @@ public class Game extends Group {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
 
-    private Canvas canvas;
     private GraphicsContext gc;
     private Timeline gameLoop;
-    private boolean running = true;
+    private boolean running = false;
 
     private int x = WIDTH / 2;
     private int y = HEIGHT / 2;
     private final int velocity = 1;
     private int xVelocity = velocity;
     private int yVelocity = 0;
+    private double time;
 
     public Game() {
-        canvas = new Canvas(WIDTH,HEIGHT);
+        Canvas canvas = new Canvas(WIDTH,HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
         this.getChildren().add(canvas);
@@ -38,17 +38,17 @@ public class Game extends Group {
         KeyFrame kf = new KeyFrame(
                 Duration.seconds(0.017),                // 60 FPS
                 ae -> {
-                    double t = (System.currentTimeMillis() - timeStart) / 1000.0;  //seconds elapsed since game start
+                    time = (System.currentTimeMillis() - timeStart) / 1000.0;  //seconds elapsed since game start
                     clear();
                     drawStage();
                     moveSnake();
                     drawSnake();
+                    checkRules();
                 });
 
         gameLoop = new Timeline();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
         gameLoop.getKeyFrames().add(kf);
-        gameLoop.play();
     }
 
     private void clear() {
@@ -67,6 +67,22 @@ public class Game extends Group {
 
     private void drawSnake() {
         gc.fillRect(x, y, 10, 10);
+    }
+
+    private void checkRules() {
+        if(x <= 1 || x >= WIDTH - 11 || y <= 1 || y >= HEIGHT - 11) {
+            stopGame();
+        }
+    }
+
+    public void startGame() {
+        gameLoop.play();
+        running = true;
+    }
+
+    public void stopGame() {
+        gameLoop.stop();
+        running = false;
     }
 
     public void input(KeyCode key) {
@@ -88,14 +104,11 @@ public class Game extends Group {
         }
         else if(key == KeyCode.SPACE) {
             if(running) {
-                gameLoop.stop();
-                running = false;
+                stopGame();
             }
             else {
-                gameLoop.play();
-                running = true;
+                startGame();
             }
         }
     }
-
 }
