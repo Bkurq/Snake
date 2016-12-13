@@ -12,22 +12,26 @@ import javafx.util.Duration;
 /**
  * Created by Bert on 2016-12-12.
  */
-public class Game extends Group {
+public class Game extends Group{
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
 
     private GraphicsContext gc;
     private Timeline gameLoop;
-    private boolean running = false;
+    private boolean running;
 
-    private int x = WIDTH / 2;
-    private int y = HEIGHT / 2;
+    private int x;
+    private int y;
     private final int velocity = 1;
     private int xVelocity = velocity;
     private int yVelocity = 0;
     private double time;
 
     public Game() {
+        running = false;
+        x = WIDTH / 2;
+        y = HEIGHT / 2;
+
         Canvas canvas = new Canvas(WIDTH,HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
@@ -47,8 +51,38 @@ public class Game extends Group {
                 });
 
         gameLoop = new Timeline();
-        gameLoop.setCycleCount(Timeline.INDEFINITE);
+        gameLoop.setCycleCount(1);
         gameLoop.getKeyFrames().add(kf);
+        gameLoop.play();
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    public int input(KeyCode key) {
+        if (key == KeyCode.UP) {
+            xVelocity = 0;
+            yVelocity = -velocity;
+        }
+        else if (key == KeyCode.DOWN) {
+            xVelocity = 0;
+            yVelocity = velocity;
+        }
+        else if (key == KeyCode.RIGHT) {
+            xVelocity = velocity;
+            yVelocity = 0;
+        }
+        else if(key == KeyCode.LEFT) {
+            xVelocity = -velocity;
+            yVelocity = 0;
+        }
+        else if(key == KeyCode.ENTER) {
+            if(running) {
+                stopGame();
+            }
+            else {
+                startGame();
+            }
+        }
+        return -1;
     }
 
     private void clear() {
@@ -75,6 +109,10 @@ public class Game extends Group {
         }
     }
 
+    public double getTime() {
+        return time / 1000;
+    }
+
     public void startGame() {
         gameLoop.play();
         running = true;
@@ -85,30 +123,4 @@ public class Game extends Group {
         running = false;
     }
 
-    public void input(KeyCode key) {
-        if (key == KeyCode.UP) {
-            xVelocity = 0;
-            yVelocity = -velocity;
-        }
-        else if (key == KeyCode.DOWN) {
-            xVelocity = 0;
-            yVelocity = velocity;
-        }
-        else if (key == KeyCode.RIGHT) {
-            xVelocity = velocity;
-            yVelocity = 0;
-        }
-        else if(key == KeyCode.LEFT) {
-            xVelocity = -velocity;
-            yVelocity = 0;
-        }
-        else if(key == KeyCode.ENTER) {
-            if(running) {
-                stopGame();
-            }
-            else {
-                startGame();
-            }
-        }
-    }
 }
