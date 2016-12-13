@@ -1,7 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -12,14 +11,15 @@ public class Main extends Application {
         theStage.setTitle("Snake");
 
         Game root = new Game();
-        Scene theScene = new Scene(root);
+        Start start = new Start();
+        Scene theScene = new Scene(start);
         theScene.setOnKeyPressed(event -> {
             root.input(event.getCode());
         });
 
         theStage.setScene(theScene);
         theStage.show();
-        root.startGame();
+        //root.startGame();
     }
 
     public static void main(String[] args) {

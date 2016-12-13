@@ -102,7 +102,7 @@ public class Game extends Group {
             xVelocity = -velocity;
             yVelocity = 0;
         }
-        else if(key == KeyCode.SPACE) {
+        else if(key == KeyCode.ENTER) {
             if(running) {
                 stopGame();
             }
