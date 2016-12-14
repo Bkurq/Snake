@@ -2,12 +2,20 @@ package sample;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import java.util.EventListener;
 
 /**
  * Created by Bert on 2016-12-12.
@@ -19,6 +27,7 @@ public class Game extends Group{
     private GraphicsContext gc;
     private Timeline gameLoop;
     private boolean running;
+    private BooleanProperty gameOver = new SimpleBooleanProperty(false);
 
     private int x;
     private int y;
@@ -26,19 +35,28 @@ public class Game extends Group{
     private int xVelocity = velocity;
     private int yVelocity = 0;
     private double time;
+    private long timeStart;
 
     public Game() {
         running = false;
         x = WIDTH / 2;
         y = HEIGHT / 2;
+        xVelocity = velocity;
+        yVelocity = 0;
+        gameOver.set(false);
+
+        gameOver.addListener((observable, oldValue, newValue) -> {
+            gc.setFont(Font.font(40));
+            gc.setFill(Color.RED);
+            gc.fillText("GAME OVER", 210, 500);
+            gc.setFill(Color.BLACK);
+        });
 
         Canvas canvas = new Canvas(WIDTH,HEIGHT);
         gc = canvas.getGraphicsContext2D();
-
         this.getChildren().add(canvas);
 
-        final long timeStart = System.currentTimeMillis();
-
+        timeStart = System.currentTimeMillis();
         KeyFrame kf = new KeyFrame(
                 Duration.seconds(0.017),                // 60 FPS
                 ae -> {
@@ -55,6 +73,23 @@ public class Game extends Group{
         gameLoop.getKeyFrames().add(kf);
         gameLoop.play();
         gameLoop.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    public void restart() {
+        running = false;
+        x = WIDTH / 2;
+        y = HEIGHT / 2;
+        xVelocity = velocity;
+        yVelocity = 0;
+        timeStart = System.currentTimeMillis();
+        gameOver.set(false);
+    }
+
+    public void startOrStop() {
+        if(running)
+            stopGame();
+        else
+            startGame();
     }
 
     public int input(KeyCode key) {
@@ -105,6 +140,7 @@ public class Game extends Group{
 
     private void checkRules() {
         if(x <= 1 || x >= WIDTH - 11 || y <= 1 || y >= HEIGHT - 11) {
+            gameOver.set(true);
             stopGame();
         }
     }
@@ -114,13 +150,14 @@ public class Game extends Group{
     }
 
     public void startGame() {
-        gameLoop.play();
-        running = true;
+        if(!gameOver.getValue()) {
+            gameLoop.play();
+            running = true;
+        }
     }
 
     public void stopGame() {
         gameLoop.stop();
         running = false;
     }
-
 }

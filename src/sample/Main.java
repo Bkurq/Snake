@@ -52,13 +52,14 @@ public class Main extends Application {
         Button newGame = new Button("New");
         newGame.setFont(Font.font(20));
         newGame.setOnAction(event -> {
+            game.restart();
             game.startGame();
         });
 
         Button pauseGame = new Button("Pause");
         pauseGame.setFont(Font.font(20));
         pauseGame.setOnAction(event -> {
-            game.stopGame();
+            game.startOrStop();
         });
 
         Button exit = new Button("Exit");
