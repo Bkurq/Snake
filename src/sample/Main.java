@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Main extends Application {
 
@@ -36,18 +34,6 @@ public class Main extends Application {
         menu.setSpacing(30);
         menu.setPadding(new Insets(30, 30, 30, 30));
         menu.setAlignment(Pos.CENTER);
-
-        ScaleTransition scaleUp = new ScaleTransition(new Duration(200));
-        scaleUp.setFromX(1);
-        scaleUp.setFromY(1);
-        scaleUp.setToX(1.1);
-        scaleUp.setToY(1.1);
-
-        ScaleTransition scaleDown = new ScaleTransition(new Duration(200));
-        scaleDown.setFromX(1.1);
-        scaleDown.setFromY(1.1);
-        scaleDown.setToX(1);
-        scaleDown.setToY(1);
 
         Button newGame = new Button("New");
         newGame.setFont(Font.font(20));
