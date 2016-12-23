@@ -26,35 +26,36 @@ public class Main extends Application {
             event.consume();
         });
         theStage.setScene(scene);
+        theStage.setResizable(false);
         theStage.show();
     }
 
     private HBox createControls(Game game) {
         HBox menu = new HBox();
         menu.setSpacing(30);
-        menu.setPadding(new Insets(30, 30, 30, 30));
+        menu.setPadding(new Insets(20, 20, 20, 20));
         menu.setAlignment(Pos.CENTER);
 
         Button newGame = new Button("New");
         newGame.setFont(Font.font(20));
         newGame.setOnAction(event -> {
+            game.stopGame();
             game.restart();
-            game.startGame();
         });
 
-        Button pauseGame = new Button("Pause");
+        Button pauseGame = new Button("Play/Pause");
         pauseGame.setFont(Font.font(20));
         pauseGame.setOnAction(event -> {
             game.startOrStop();
         });
 
-        Button exit = new Button("Exit");
-        exit.setFont(Font.font(20));
-        exit.setOnAction(event -> {
-            System.exit(0);
+        Button frameForward= new Button("Frame Forward");
+        frameForward.setFont(Font.font(20));
+        frameForward.setOnAction(event -> {
+            game.frameForward();
         });
 
-        menu.getChildren().addAll(newGame,pauseGame, exit);
+        menu.getChildren().addAll(newGame,pauseGame, frameForward);
         return menu;
     }
 

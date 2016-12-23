@@ -25,8 +25,10 @@ public class Game extends Group{
     private boolean running;
     private BooleanProperty gameOver = new SimpleBooleanProperty(false);
 
-    private int x;
-    private int y;
+    private int x[] = new int[10];
+    private int y[] = new int[10];
+    private int length;
+    private final int SIDE_LENGTH = 10;
     private final int velocity = 1;
     private int xVelocity = velocity;
     private int yVelocity = 0;
@@ -34,12 +36,7 @@ public class Game extends Group{
     private long timeStart;
 
     public Game() {
-        running = false;
-        x = WIDTH / 2;
-        y = HEIGHT / 2;
-        xVelocity = velocity;
-        yVelocity = 0;
-        gameOver.set(false);
+        restart();
 
         gameOver.addListener((observable, oldValue, newValue) -> {
             gc.setFont(Font.font(40));
@@ -73,12 +70,15 @@ public class Game extends Group{
 
     public void restart() {
         running = false;
-        x = WIDTH / 2;
-        y = HEIGHT / 2;
         xVelocity = velocity;
         yVelocity = 0;
-        timeStart = System.currentTimeMillis();
+        length = 3;
+        for(int a = 0; a < length; a++) {
+            x[a] = WIDTH / 2 + (2-a) * SIDE_LENGTH;
+            y[a] = HEIGHT / 2;
+        }
         gameOver.set(false);
+        timeStart = System.currentTimeMillis();
     }
 
     public void startOrStop() {
@@ -123,19 +123,27 @@ public class Game extends Group{
     private void drawStage() {
         gc.setStroke(Color.RED);
         gc.strokeRect(1, 1, WIDTH - 1, HEIGHT - 1);
+        gc.setStroke(Color.BLACK);
     }
 
     private void moveSnake() {
-        x += xVelocity;
-        y += yVelocity;
+        for(int i = (length-1); i > 0; i--) {
+            x[i] = x[i - 1] - 10;
+            y[i] = y[i - 1];
+
+        }
+        x[0] += xVelocity;
+        y[0] += yVelocity;
     }
 
     private void drawSnake() {
-        gc.fillRect(x, y, 10, 10);
+        for(int i = 0; i < length; i++) {
+            gc.fillRect(x[i], y[i], 10, 10);
+        }
     }
 
     private void checkRules() {
-        if(x <= 1 || x >= WIDTH - 11 || y <= 1 || y >= HEIGHT - 11) {
+        if(x[0] <= 1 || x[0] >= WIDTH - 11 || y[0] <= 1 || y[0] >= HEIGHT - 11) {
             gameOver.set(true);
             stopGame();
         }
@@ -143,6 +151,14 @@ public class Game extends Group{
 
     public double getTime() {
         return time / 1000;
+    }
+
+    public void frameForward() {
+        if(!gameOver.getValue()) {
+            gameLoop.setCycleCount(1);
+            gameLoop.play();
+            gameLoop.setCycleCount(Timeline.INDEFINITE);
+        }
     }
 
     public void startGame() {
