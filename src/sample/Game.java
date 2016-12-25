@@ -3,7 +3,6 @@ package sample;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -25,12 +24,13 @@ public class Game extends Group{
     private boolean running;
     private BooleanProperty gameOver = new SimpleBooleanProperty(false);
 
-    private int x[] = new int[10];
-    private int y[] = new int[10];
+    private int xSnake[] = new int[10];
+    private int ySnake[] = new int[10];
+    private int xDots[] = new int[5];
+    private int yDots[] = new int[5];
     private int length;
     private final int SIDE_LENGTH = 10;
-    private final int velocity = 1;
-    private int xVelocity = velocity;
+    private int xVelocity = SIDE_LENGTH;
     private int yVelocity = 0;
     private double time;
     private long timeStart;
@@ -51,7 +51,7 @@ public class Game extends Group{
 
         timeStart = System.currentTimeMillis();
         KeyFrame kf = new KeyFrame(
-                Duration.seconds(0.017),                // 60 FPS
+                Duration.seconds(0.3),
                 ae -> {
                     time = (System.currentTimeMillis() - timeStart) / 1000.0;  //seconds elapsed since game start
                     clear();
@@ -70,12 +70,12 @@ public class Game extends Group{
 
     public void restart() {
         running = false;
-        xVelocity = velocity;
+        xVelocity = SIDE_LENGTH;
         yVelocity = 0;
         length = 3;
         for(int a = 0; a < length; a++) {
-            x[a] = WIDTH / 2 + (2-a) * SIDE_LENGTH;
-            y[a] = HEIGHT / 2;
+            xSnake[a] = WIDTH / 2 + (2-a) * SIDE_LENGTH;
+            ySnake[a] = HEIGHT / 2;
         }
         gameOver.set(false);
         timeStart = System.currentTimeMillis();
@@ -91,18 +91,18 @@ public class Game extends Group{
     public int input(KeyCode key) {
         if (key == KeyCode.UP) {
             xVelocity = 0;
-            yVelocity = -velocity;
+            yVelocity = -SIDE_LENGTH;
         }
         else if (key == KeyCode.DOWN) {
             xVelocity = 0;
-            yVelocity = velocity;
+            yVelocity = SIDE_LENGTH;
         }
         else if (key == KeyCode.RIGHT) {
-            xVelocity = velocity;
+            xVelocity = SIDE_LENGTH;
             yVelocity = 0;
         }
         else if(key == KeyCode.LEFT) {
-            xVelocity = -velocity;
+            xVelocity = -SIDE_LENGTH;
             yVelocity = 0;
         }
         else if(key == KeyCode.ENTER) {
@@ -128,22 +128,22 @@ public class Game extends Group{
 
     private void moveSnake() {
         for(int i = (length-1); i > 0; i--) {
-            x[i] = x[i - 1] - 10;
-            y[i] = y[i - 1];
+            xSnake[i] = xSnake[i - 1];
+            ySnake[i] = ySnake[i - 1];
 
         }
-        x[0] += xVelocity;
-        y[0] += yVelocity;
+        xSnake[0] += xVelocity;
+        ySnake[0] += yVelocity;
     }
 
     private void drawSnake() {
         for(int i = 0; i < length; i++) {
-            gc.fillRect(x[i], y[i], 10, 10);
+            gc.fillRect(xSnake[i], ySnake[i], 10, 10);
         }
     }
 
     private void checkRules() {
-        if(x[0] <= 1 || x[0] >= WIDTH - 11 || y[0] <= 1 || y[0] >= HEIGHT - 11) {
+        if(xSnake[0] <= 1 || xSnake[0] >= WIDTH - 11 || ySnake[0] <= 1 || ySnake[0] >= HEIGHT - 11) {
             gameOver.set(true);
             stopGame();
         }
